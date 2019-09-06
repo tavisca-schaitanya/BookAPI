@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace ServiceLayer.services
 {
-    public class BookService
+    public class BookService: IService
     {
 
         private BookRepository _bookRepository;
@@ -12,6 +12,7 @@ namespace ServiceLayer.services
         {
             _bookRepository = new BookRepository();
         }
+
 
         public Response CreateResponse(object result, string error = "", bool status = true)
         {
@@ -23,12 +24,14 @@ namespace ServiceLayer.services
 
         }
 
-        public Response GetAllBooks()
+
+        public Response Get()
         {
             return CreateResponse(_bookRepository.GetAllBooks());
         }
 
-        public Response GetBookById(int id)
+
+        public Response Get(int id)
         {
             if (id <= 0)
                 return CreateResponse(null, "Invalid Id, Id should be a positive number.", false);
@@ -60,7 +63,8 @@ namespace ServiceLayer.services
             return ValidateNames(book.Name, book.Category, book.Author);
         }
 
-        public Response AddBook(Book book)
+
+        public Response Post(Book book)
         {
             if (!ValidateBook(book))
                 return CreateResponse(null, "Invalid data.", false);
@@ -69,7 +73,7 @@ namespace ServiceLayer.services
         }
 
 
-        public Response UpdateBook(Book book)
+        public Response Put(Book book)
         {
             if (!ValidateBook(book))
                 return CreateResponse(null, "Invalid data.", false);
@@ -78,7 +82,7 @@ namespace ServiceLayer.services
         }
 
 
-        public Response DeleteBook(Book book)
+        public Response Delete(Book book)
         {
             return CreateResponse("", "", _bookRepository.DeleteBook(book));
         }

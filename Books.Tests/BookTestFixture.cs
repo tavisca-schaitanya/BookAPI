@@ -6,14 +6,14 @@ using Xunit;
 
 namespace Books.Tests
 {
-    public class UnitTest1
+    public class BookTestFixture
     {
         [Fact]
         public void Test_GetAllBooks_When_No_Books()
         {
             BookService bookService = new BookService();
 
-            var actualResponse = bookService.GetAllBooks();
+            var actualResponse = bookService.Get();
 
             Assert.Empty((IEnumerable<Book>)actualResponse.Result);
         }
@@ -31,10 +31,10 @@ namespace Books.Tests
                 book2
             };
 
-            bookService.AddBook(book1);
-            bookService.AddBook(book2);
+            bookService.Post(book1);
+            bookService.Post(book2);
 
-            var actualResponse = bookService.GetAllBooks();
+            var actualResponse = bookService.Get();
 
             Assert.True(actualResponse.Status);
             Assert.Equal(books, actualResponse.Result);
@@ -46,7 +46,7 @@ namespace Books.Tests
         {
             BookService bookService = new BookService();
 
-            var actualResponse = bookService.GetBookById(-1);
+            var actualResponse = bookService.Get(-1);
 
             Assert.Null(actualResponse.Result);
             Assert.False(actualResponse.Status);
@@ -59,7 +59,7 @@ namespace Books.Tests
         {
             BookService bookService = new BookService();
 
-            var actualResponse = bookService.GetBookById(1);
+            var actualResponse = bookService.Get(1);
 
             Assert.Null(actualResponse.Result);
             Assert.False(actualResponse.Status);
@@ -80,10 +80,10 @@ namespace Books.Tests
                 book2
             };
 
-            bookService.AddBook(book1);
-            bookService.AddBook(book2);
+            bookService.Post(book1);
+            bookService.Post(book2);
 
-            var actualResponse = bookService.GetBookById(1);
+            var actualResponse = bookService.Get(1);
 
             Assert.Equal(book1, actualResponse.Result);
             Assert.True(actualResponse.Status);
@@ -96,7 +96,7 @@ namespace Books.Tests
             BookService bookService = new BookService();
 
             var book = new Book() { Id = -1, Name = "Hello", Author = "Chaitanya", Category = "Fiction", Price = 500 };
-            var actualResponse = bookService.AddBook(book);
+            var actualResponse = bookService.Post(book);
 
             Assert.Null(actualResponse.Result);
             Assert.False(actualResponse.Status);
@@ -110,7 +110,7 @@ namespace Books.Tests
             BookService bookService = new BookService();
 
             var book = new Book() { Id = 1, Name = "Hello", Author = "Chaitanya", Category = "Fiction", Price = -500 };
-            var actualResponse = bookService.AddBook(book);
+            var actualResponse = bookService.Post(book);
 
             Assert.Null(actualResponse.Result);
             Assert.False(actualResponse.Status);
@@ -127,7 +127,7 @@ namespace Books.Tests
             BookService bookService = new BookService();
 
             var book = new Book() { Id = 1, Name = bookName, Author = "Chaitanya", Category = "Fiction", Price = 500 };
-            var actualResponse = bookService.AddBook(book);
+            var actualResponse = bookService.Post(book);
 
             Assert.Null(actualResponse.Result);
             Assert.False(actualResponse.Status);
@@ -144,7 +144,7 @@ namespace Books.Tests
             BookService bookService = new BookService();
 
             var book = new Book() { Id = 1, Name = bookName, Author = "Chaitanya", Category = "Fiction", Price = 500 };
-            var actualResponse = bookService.AddBook(book);
+            var actualResponse = bookService.Post(book);
 
             Assert.True(actualResponse.Status);
         }
@@ -159,7 +159,7 @@ namespace Books.Tests
             BookService bookService = new BookService();
 
             var book = new Book() { Id = 1, Name = "Without Conscience", Author = authorName, Category = "Fiction", Price = 500 };
-            var actualResponse = bookService.AddBook(book);
+            var actualResponse = bookService.Post(book);
 
             Assert.Null(actualResponse.Result);
             Assert.False(actualResponse.Status);
@@ -176,7 +176,7 @@ namespace Books.Tests
             BookService bookService = new BookService();
 
             var book = new Book() { Id = 1, Name = "Without", Author = authorName, Category = "Fiction", Price = 500 };
-            var actualResponse = bookService.AddBook(book);
+            var actualResponse = bookService.Post(book);
 
             Assert.True(actualResponse.Status);
         }
@@ -188,7 +188,7 @@ namespace Books.Tests
             BookService bookService = new BookService();
 
             var book = new Book() { Id = 1, Name = "Hello", Author = "Chaitanya", Category = "Fiction", Price = 500 };
-            var actualResponse = bookService.AddBook(book);
+            var actualResponse = bookService.Post(book);
 
             Assert.True(actualResponse.Status);
         }
@@ -199,10 +199,10 @@ namespace Books.Tests
             BookService bookService = new BookService();
 
             var book = new Book() { Id = 1, Name = "Hello", Author = "Chaitanya", Category = "Fiction", Price = 500 };
-            bookService.AddBook(book);
+            bookService.Post(book);
 
             var newBook = new Book() { Id = -1, Name = "Hell(o", Author = "Chai*tanya", Category = "Fiction/", Price = -500 };
-            var actualResponse = bookService.UpdateBook(newBook);
+            var actualResponse = bookService.Put(newBook);
 
             Assert.Null(actualResponse.Result);
             Assert.False(actualResponse.Status);
@@ -216,13 +216,13 @@ namespace Books.Tests
             BookService bookService = new BookService();
 
             var oldBook = new Book() { Id = 1, Name = "Hello", Author = "Chaitanya", Category = "Fiction", Price = 500 };
-            bookService.AddBook(oldBook);
+            bookService.Post(oldBook);
 
             var newBook = new Book() { Id = 1, Name = "Hello World", Author = "Chaitanya Bammidi", Category = "Fiction", Price = 600 };
-            var actualResponse = bookService.UpdateBook(newBook);
+            var actualResponse = bookService.Put(newBook);
 
             Assert.True(actualResponse.Status);
-            Assert.Equal(bookService.GetBookById(oldBook.Id).Result, bookService.GetBookById(oldBook.Id).Result);
+            Assert.Equal(bookService.Get(oldBook.Id).Result, bookService.Get(oldBook.Id).Result);
         }
 
 
@@ -233,7 +233,7 @@ namespace Books.Tests
 
             var book = new Book() { Id = 1, Name = "Hello", Author = "Chaitanya", Category = "Fiction", Price = 500 };
 
-            var actualResponse = bookService.DeleteBook(book);
+            var actualResponse = bookService.Delete(book);
 
             Assert.False(actualResponse.Status);
         }
@@ -252,13 +252,12 @@ namespace Books.Tests
                 book2
             };
 
-            bookService.AddBook(book1);
-            bookService.AddBook(book2);
-            var actualResponse = bookService.DeleteBook(book1);
+            bookService.Post(book1);
+            bookService.Post(book2);
+            var actualResponse = bookService.Delete(book1);
 
             Assert.True(actualResponse.Status);
-            Assert.Equal(new List<Book> { book2 }, bookService.GetAllBooks().Result);
-
+            Assert.Equal(new List<Book> { book2 }, bookService.Get().Result);
         }
     }
 }
